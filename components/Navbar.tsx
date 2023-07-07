@@ -1,8 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import {NavLinks} from "../constant";
+import AuthProviders from "./AuthProvider";
+import {useSession} from "next-auth/react";
+import ProfileMenu from "./ProfileMenu";
+import Button from "./Button";
+
 
 const Navbar = () => {
+    const { data: session, status } = useSession()
     return (
         <nav className='flexBetween navbar'>
             <div className='flex-1 flexStart gap-10'>
@@ -14,17 +19,18 @@ const Navbar = () => {
                         alt='logo'
                     />
                 </Link>
-                <ul className='xl:flex hidden text-small gap-7'>
-                    {NavLinks.map((link) => (
-                        <Link href={link.href} key={link.text}>
-                            {link.text}
-                        </Link>
-                    ))}
-                </ul>
             </div>
 
             <div className='flexCenter gap-4'>
-               <button>sign in</button>
+                {session?.user ? (
+                    <>
+                        <ProfileMenu session={session}/>
+                        <Link href="/create-project">
+                            <Button title="Share work" />
+                        </Link>
+                    </>
+                     )
+                    : <AuthProviders />}
             </div>
         </nav>
     );
